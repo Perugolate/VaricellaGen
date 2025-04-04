@@ -78,7 +78,7 @@ do
                         reverse_read="$2"
                         shift 2
                         ;;
-		--consensus)
+		--multifasta)
 			consensus="$2"
 			shift 2
 			;;
