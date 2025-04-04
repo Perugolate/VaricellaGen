@@ -1,10 +1,10 @@
 ## 🎬 VaricellaGen
 A comprehensive pipeline for the genomic analysis of Varicella-zoster virus (VZV), the causative agent of chickenpox.
 
-:wq
 ## 🏆 About
 VaricellaGen is a modular and automated pipeline designed to simplify and standardize the genomic analysis of Varicella-zoster virus (VZV). It integrates quality control, variant calling, consensus genome generation, clade typing, and phylogenetic analysis into a streamlined workflow.
 
+![workflow](workflow.png)
 
 ## 🏷️ Key Features:
 
