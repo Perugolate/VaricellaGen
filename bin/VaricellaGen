@@ -14,7 +14,8 @@ reverse_read="" # reverse read
 consensus="" # consensus file
 varcall=false # variant call option: this performs only variant calling
 typing=false # This runs the whole pipeline
-phylogeny=false # resistance profiling
+phylogeny=false # phylogeny
+background="JN704693.1/DEU/2005/Clade1"
 cores=16 # get number of cpus to use
 version="1.0"
 
@@ -95,6 +96,10 @@ do
 			;;
 		--phylogeny)
 			phylogeny=true
+			shift 2
+			;;
+		--bg)
+			background="$2"
 			shift 2
 			;;
 		--cores)
@@ -212,6 +217,23 @@ run_var_p() {
 	nucper=$(echo "scale = 2; $nuccnt*100 / 124884" | bc -l)
 	echo "id,genome coverage,N content" > $output_dir/results/consensus/metrics.csv
 	echo "$id,$nucper,$nper" >> $output_dir/results/consensus/metrics.csv
+	mkdir -p $output_dir/results/phylogeny/msa
+	mkdir -p $output_dir/results/phylogeny/tree
+	#merge the produced consensus to the background dataset if your genome coverage is 70% and above
+	if (( $(echo "$nucper > 70") ))
+	then
+		cat $output_dir/results/consensus/*fa ${HOME}/VaricellaGen/background_dataset/bg.fasta > $output_dir/results/phylogeny/msa/${id}_multifasta.fa
+		mafft --thread $cores $output_dir/results/phylogeny/msa/${id}_multifasta.fa > $output_dir/results/phylogeny/msa/${id}_multifasta.aln.fa
+		iqtree2 -s $output_dir/results/phylogeny/msa/${id}_multifasta.fa -T $cores -m TEST -czb -B 1000 -o $background --quiet
+		mv $output_dir/results/phylogeny/msa/* $output_dir/results/phylogeny/tree/
+		mv $output_dir/results/phylogeny/tree/*fa $output_dir/results/phylogeny/msa/
+		mv $output_dir/results/phylogeny/tree/*treefile $output_dir/results/phylogeny/msa/
+		rm $output_dir/results/phylogeny/tree/*
+		mv $output_dir/results/phylogeny/msa/*treefile $output_dir/results/phylogeny/tree/
+	else
+		echo "$id has genome coverage below 70% and therefore the analysis will stop here"
+		exit 1
+	fi	
 }
 
 #run_var_p
@@ -225,6 +247,7 @@ run_typing_p() {
 	echo "id,clade" > $output/clade.csv
 	echo "$id,$clade" >> $output/clade.csv
 }
+
 
 #run_typing_p
 
