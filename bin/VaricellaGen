@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
-. "$CONDA_PREFIX/etc/profile.d/conda.sh" # enable activation of the conda environment within script
+#. "$CONDA_PREFIX/etc/profile.d/conda.sh" # enable activation of the conda environment within script
+# Try to find conda.sh in the PATH
+CONDA_SH=$(dirname "$(which conda)")/../etc/profile.d/conda.sh
+source "$CONDA_SH"
 
 conda activate base
 
