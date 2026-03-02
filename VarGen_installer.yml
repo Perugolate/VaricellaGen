@@ -2,7 +2,6 @@ name: VaricellaGen
 channels:
   - conda-forge
   - bioconda
-  - defaults
 dependencies:
   - fastqc=0.12.1
   - trim-galore=0.6.10
